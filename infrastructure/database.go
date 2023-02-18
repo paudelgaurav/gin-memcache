@@ -7,7 +7,7 @@ import (
 
 var DB *gorm.DB
 
-func Connect() {
+func SetUpDB() {
 	var err error
 	DB, err = gorm.Open(sqlite.Open("sqlite.db"), &gorm.Config{})
 	if err != nil {

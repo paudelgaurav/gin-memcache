@@ -3,6 +3,7 @@ module github.com/paudelgaurav/gin-memcache
 go 1.19
 
 require (
+	github.com/bradfitz/gomemcache v0.0.0-20230124162541-5f7a7d875746
 	github.com/gin-gonic/gin v1.8.2
 	gorm.io/driver/sqlite v1.4.4
 	gorm.io/gorm v1.24.5

@@ -6,7 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/paudelgaurav/gin-memcache/infrastructure"
 	"github.com/paudelgaurav/gin-memcache/models"
+	"github.com/paudelgaurav/gin-memcache/services"
 )
+
+func GetBlogPosts(c *gin.Context) {
+	posts, err := services.GetPosts()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	}
+	c.JSON(http.StatusOK, gin.H{"data": posts})
+}
 
 func CreateBlogPost(c *gin.Context) {
 	posts := []models.BlogPost{
@@ -46,13 +55,4 @@ func CreateBlogPost(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"msg": "blog posts created"})
-}
-
-func GetBlogPosts(c *gin.Context) {
-	var posts []models.BlogPost
-	if err := infrastructure.DB.Find(&posts).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error while fetching blog posts"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"data": posts})
 }

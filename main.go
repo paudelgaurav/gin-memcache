@@ -16,7 +16,8 @@ func main() {
 }
 
 func loadDatabase() {
-	infrastructure.Connect()
+	infrastructure.SetUpMemCache()
+	infrastructure.SetUpDB()
 	if err := infrastructure.DB.AutoMigrate(&models.BlogPost{}); err != nil {
 		log.Fatal("BlogPost migrate err", err)
 	}
@@ -29,5 +30,9 @@ func serveApplication() {
 	})
 	r.POST("/posts", controllers.CreateBlogPost)
 	r.GET("/posts", controllers.GetBlogPosts)
+	r.POST("/clear", func(c *gin.Context) {
+		infrastructure.Cache.DeleteAll()
+		c.JSON(http.StatusOK, gin.H{"msg": "success"})
+	})
 	r.Run()
 }
