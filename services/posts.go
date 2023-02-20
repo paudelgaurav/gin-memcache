@@ -10,30 +10,32 @@ import (
 )
 
 func GetPosts() (posts []models.BlogPost, err error) {
+	// fetching from cache
+	// if available, we will unmarshall and return
 	cachedPosts, err := infrastructure.Cache.Get("posts")
 	if err == nil {
 		posts = toBlogPost(cachedPosts.Value)
-		return
+		return posts, err
 	}
-	// fetching fro, db and setting up cache
+	// fetching from db
 	posts, err = repository.GetPosts()
 	if err != nil {
-		return
+		return nil, err
 	}
 	// storing in cache
 	cachedData, err := json.Marshal(posts)
 	if err != nil {
-		return
+		return posts, err
 	}
 	if err = infrastructure.Cache.Set(&memcache.Item{Key: "posts", Value: cachedData}); err != nil {
-		return
+		return posts, err
 	}
-	return
+	return posts, err
 }
 
 func toBlogPost(data []byte) (posts []models.BlogPost) {
 	if err := json.Unmarshal(data, &posts); err != nil {
-		return
+		return posts
 	}
 	return posts
 }
